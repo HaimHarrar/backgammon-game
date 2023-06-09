@@ -1,0 +1,42 @@
+.point{
+  height: 100%;
+  display: flex;
+  &.Top{
+    --dir1: top right;
+    --dir2: bottom right;
+    align-items: flex-start;
+  }
+  
+  &.Bottom{
+    --dir1: bottom right;
+    --dir2: top right;
+    align-items: flex-end;
+  }
+
+  .checkersHolder{
+    height: 27vh;
+    width: 7vh;
+  
+    background-image:
+    linear-gradient(to var(--dir1), var(--board-bgc) 50%, transparent 0),
+    linear-gradient(to var(--dir2), transparent 50%, var(--board-bgc) 0);
+    background-size: 50% 100%;
+    background-repeat: no-repeat;
+    background-position: left, right;
+  
+    .checkers{
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      &.Top{
+        justify-content: flex-start;
+      }
+  
+      &.Bottom{
+        justify-content: flex-end;
+      }
+  }
+
+  }
+}

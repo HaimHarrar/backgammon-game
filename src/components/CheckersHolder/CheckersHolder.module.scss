@@ -1,0 +1,14 @@
+.checkersHolder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &.Top {
+        justify-content: flex-start;
+    }
+
+    &.Bottom {
+        justify-content: flex-end;
+    }
+}
