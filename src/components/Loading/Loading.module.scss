@@ -1,0 +1,15 @@
+.loading{
+    height: 70vh;
+    width: 70vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: bisque;
+
+    .loadingTitle{
+        padding: 20px;
+        p{
+            font-size: 5em;
+        }
+    }
+}

@@ -1,12 +1,19 @@
 export class Dice {
-    MIN = 1
-    MAX = 6
-    result: number;
-    constructor(){
-        this.result = 0
+    static MIN = 1;
+    static MAX = 6;
+    public value: number = 0;
+
+    constructor(value1?: number){
+        if(value1){
+            this.value = value1
+        }
     }
 
     rollDice(){
-        this.result = Math.floor(Math.random() * this.MAX + this.MIN)
+        this.value = Math.floor(Math.random() * Dice.MAX + Dice.MIN)
+    }
+
+    initDice(){
+        this.value = 0;
     }
 }

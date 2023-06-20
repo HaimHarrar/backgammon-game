@@ -6,7 +6,8 @@
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
-
+    border: 1px solid;
+    border-radius: 8px;
     .dices{
         display: flex;
         justify-content: center;
@@ -24,6 +25,7 @@
         -ms-user-select: none; /* IE 10 and IE 11 */
         user-select: none; /* Standard syntax */
         cursor: pointer;
+        border-radius: 4px;
         p{
             margin: 0;
         }

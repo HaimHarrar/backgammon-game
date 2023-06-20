@@ -2,7 +2,7 @@ import React from 'react'
 import styles from './Dice.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const Dice = ({number, color}) => {
+const Dice = ({value, color}) => {
     const DICE_FACE = {
         0: 'd6',
         1: 'one',
@@ -14,7 +14,7 @@ const Dice = ({number, color}) => {
     }
   return (
     <div className={styles.dice}>
-        <FontAwesomeIcon className={styles.dice} icon={`fa-solid fa-dice-${DICE_FACE[number]}`} style={{color: color}} />
+        <FontAwesomeIcon className={styles.dice} icon={`fa-solid fa-dice-${DICE_FACE[value]}`} style={{color: color}} />
     </div>
   )
 }

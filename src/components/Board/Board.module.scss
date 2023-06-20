@@ -6,7 +6,7 @@
     background-color: var(--board-bgc);
     display: grid;
     grid-template-columns: 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px 50px;
-
+    caret-color: transparent;
 
 
     .item1{
@@ -74,10 +74,14 @@
         transform: translate(0, -50%);
         display: flex;
         justify-content: center;
+        &.hidden{
+            display: none;
+        }
         &.left{
             left: 0;
         }
         &.right{
+            margin-right: 50px;
             right: 0;
         }
     }
