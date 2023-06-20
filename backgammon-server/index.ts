@@ -52,7 +52,7 @@ io.on(EMITTERES.CONNECTION, (socket) => {
 
     socket.on(EMITTERES.SELECT, (index: number) => {
         console.info(EMITTERES.SELECT) 
-        if(game.currentPlayer === players[playerIndex].color && game.board.points[index].color === game.currentPlayer){
+        if( game.board.points[index].checkers && game.currentPlayer === players[playerIndex].color && game.board.points[index].color === game.currentPlayer){
             game.move.setFrom(index);
             game.move.setColor(game.currentPlayer)
             io.emit(EMITTERES.SELECT, game.move)
@@ -75,14 +75,14 @@ io.on(EMITTERES.CONNECTION, (socket) => {
                 game.board.middleCheckers[game.currentPlayer === PLAYERS.PLAYER_1? PLAYERS.PLAYER_2: PLAYERS.PLAYER_1]++
             }
             game.move.to = to;
-            game.board.points[game.move.from].checkers--;
-            game.board.points[game.move.to].checkers++;
-            game.board.points[game.move.to].color = game.move.color;
+            game.board.pointSubOne(game.move.from)
+            game.board.pointAddOne(game.move.to)
+            game.board.pointChangeColor(game.move.to, players[playerIndex].color);
             game.move.initMove();
             game.deleteDiceByValue(Math.abs(distance))
             if(game.isAllDicesUsed()){
                 game.nextPlayer()
-            } 
+            }
             io.emit(EMITTERES.MOVE, game)
         }  
     })
@@ -102,6 +102,33 @@ io.on(EMITTERES.CONNECTION, (socket) => {
             game.deleteDiceByValue(game.currentPlayer === PLAYERS.PLAYER_2? 25 - to: Number(to))
             io.emit(EMITTERES.BACK_TO_BOARD, game) 
         } 
+    })
+
+    socket.on(EMITTERES.MOVE_OUT, () => {
+        console.info(EMITTERES.MOVE_OUT);
+        const distance = (players[playerIndex].color === PLAYERS.PLAYER_1? 25: 0) - game.move.from
+
+        const final = () => {
+            game.board.outsideCheckersAddOne(players[playerIndex].color)
+            game.board.pointSubOne(game.move.from)
+            game.move.initMove()
+            if(game.isAllDicesUsed()){
+                game.nextPlayer()
+            }
+            io.emit(EMITTERES.MOVE_OUT, game)
+        }
+
+        if(game.isDistanceInDices(distance, players[playerIndex].color)){
+            game.deleteDiceByValue(distance)
+            final()
+        }else if(game.isMoveOutLigal(game.move.from, players[playerIndex].color)){
+            const key = Object.keys(game.dices).find((k) => game.dices[Number(k)].value > distance)
+            if(key !== undefined){
+                game.dices[Number(key)].initDice()
+            }
+            final()
+        }
+
     })
 } )
 

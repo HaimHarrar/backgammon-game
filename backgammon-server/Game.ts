@@ -65,9 +65,10 @@ export class Game {
             this.dices[3] = new Dice(this.dices[1].value);
             this.dices[4] = new Dice(this.dices[1].value);
         }
-    } 
+    }
 
-    isDistanceInDices(distance: number, playerColor?: PLAYERS) {
+    // black have to be negetive to be legal and whtie positive
+    isDistanceInDices(distance: number, playerColor: PLAYERS) {
         if(playerColor === PLAYERS.PLAYER_1 && distance > 0 || playerColor === PLAYERS.PLAYER_2 && distance < 0){
             return Object.values(this.dices).map(dice => dice.value).includes(Math.abs(distance))
         }else {  
@@ -76,10 +77,9 @@ export class Game {
     } 
 
     deleteDiceByValue(value: number){
-        const key = Object.keys(this.dices).find((k) => this.dices[Number(k)].value === value)
-        // const key = Object.keys(this.dices).find((k: number) => this.dices[k].value === value)
+        const key = Object.keys(this.dices).find((k) => this.dices[Number(k)].value === Math.abs(value))
         if(key !== undefined){
-            this.dices[Number(key)].value = 0
+            this.dices[Number(key)].initDice()
         } 
     }
 
@@ -91,7 +91,7 @@ export class Game {
         return ((this.board.points[to].color && this.board.points[to].color !== this.currentPlayer) && (this.board.points[to].checkers === 1))
     }
  
-    isBackToBoardLigalPoint(to: number, playerColor?: PLAYERS){
+    isBackToBoardLigalPoint(to: number, playerColor: PLAYERS){
         return (this.isDistanceInDices(playerColor === PLAYERS.PLAYER_2? to - 25: to, playerColor) && (((playerColor === PLAYERS.PLAYER_1 && to <= 6) || (playerColor === PLAYERS.PLAYER_2 && to > 18))))
     }
 
@@ -109,6 +109,17 @@ export class Game {
     isDicesLigalInBackToBoard(playerColor: PLAYERS){
         return ( Object.values(this.dices).every(dice => this.board.points[dice.value].checkers === 0 || 
             this.board.points[playerColor === PLAYERS.PLAYER_1? dice.value: 25 - (25 - dice.value)].color === playerColor))
+    }
+
+    isMoveOutLigal(from: number, playerColor: PLAYERS) {
+        const startingPoint = playerColor === PLAYERS.PLAYER_1? 1: 19;
+        
+        for(let i = startingPoint; i < from; i++){
+            if(this.board.points[i].checkers > 0){
+                return false
+            }
+        }
+        return true;
     }
 
 } 

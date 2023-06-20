@@ -54,7 +54,7 @@ const Board = () => {
             <div className={styles.middleLine}>
                 <MiddleLine bgc="black" />
             </div>
-            <div className={styles.outsideLine}>
+            <div className={styles.outsideLine} onClick={() => socket.emit(EMITTERES.MOVE_OUT)}>
                 <OutsideLine bgc="black" />
             </div>
 

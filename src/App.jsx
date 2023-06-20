@@ -75,6 +75,10 @@ const App = () => {
       dispatch(setCurrentPlayer(currentPlayer))
     }
 
+    const onMoveOut = (game) => {
+      setGame(game)
+    }
+
     socket.on(EMITTERES.CONNECTION, onConnection)  ;
     socket.on(EMITTERES.LOGIN, onLogin);
     socket.on(EMITTERES.LOADING, onLoading);
@@ -85,6 +89,7 @@ const App = () => {
     socket.on(EMITTERES.MOVE, onMove);
     socket.on(EMITTERES.BACK_TO_BOARD, onBackToBoard)
     socket.on(EMITTERES.NEXT_PLAYER, onNexPlayer)
+    socket.on(EMITTERES.MOVE_OUT, onMoveOut)
 
     return () => {
       socket.off(EMITTERES.CONNECTION, onConnection);
@@ -97,6 +102,7 @@ const App = () => {
       socket.off(EMITTERES.MOVE, onMove);
       socket.off(EMITTERES.BACK_TO_BOARD, onBackToBoard)
       socket.off(EMITTERES.NEXT_PLAYER, onNexPlayer)
+      socket.off(EMITTERES.MOVE_OUT, onMoveOut)
     }
   },[dispatch])
 
