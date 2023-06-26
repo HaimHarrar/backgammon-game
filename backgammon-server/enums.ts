@@ -11,6 +11,7 @@ export const LOADING = {
 
 export const EMITTERES = {
     CONNECTION: 'connection',
+    DISCONNECT: 'disconnect',
     LOADING: 'loading',
     LOGIN: 'Login',
     LOGOUT: 'Logout',

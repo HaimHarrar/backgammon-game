@@ -3,7 +3,10 @@ import { PLAYERS } from "./enums";
 export class Player {
     public name: string = '';
     public color: PLAYERS = PLAYERS.PLAYER_1;
-    constructor(){
+    constructor(name?: string){
+        if(name){
+            this.name = name
+        }
     }
 
     setName(name: string){

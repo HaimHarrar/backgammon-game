@@ -3,23 +3,24 @@ import styles from './DicesHolder.module.scss'
 import { useSelector } from 'react-redux'
 import { dicesSelector } from '../../features/slices/dicesSlice'
 import Dice from '../Dice/Dice'
-import { COLORS, EMITTERES, STATES } from '../../features/enums'
+import { COLORS, EMITTERES } from '../../features/enums'
 import { socket } from '../../features/socket'
-import { stateSelector } from '../../features/slices/boardSlice'
+// import { stateSelector } from '../../features/slices/gameSlice'
 
 const DicesHolder = ({ bgc }) => {
   const dices = useSelector(dicesSelector)
-  const state = useSelector(stateSelector)
+  // const state = useSelector(stateSelector)
   const oppositeColor = useMemo(() => {
     return bgc === COLORS.PLAYER_1 ? COLORS.PLAYER_2 : COLORS.PLAYER_1
   }, [bgc])
 
   const onRoll = () => {
-    if(state === STATES.START){
-      socket.emit(EMITTERES.FIRST_ROLL)
-    }else{
-      socket.emit(EMITTERES.ROLL_DICES)
-    }
+    socket.emit(EMITTERES.ROLL_DICES)
+    // if(state === STATES.START){
+    //   socket.emit(EMITTERES.FIRST_ROLL)
+    // }else{
+    //   socket.emit(EMITTERES.ROLL_DICES)
+    // }
   }
 
   return (

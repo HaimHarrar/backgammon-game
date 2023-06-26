@@ -3,7 +3,7 @@ import styles from './Login.module.scss'
 import { socket } from '../../features/socket'
 import { EMITTERES, LOADING } from '../../features/enums'
 import { useDispatch } from 'react-redux'
-import { setLoading } from '../../features/slices/boardSlice'
+import { setLoading } from '../../features/slices/gameSlice'
 
 const Login = () => {
     const [username, setUsername] = useState('')

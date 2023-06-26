@@ -6,11 +6,11 @@ import Board from './components/Board/Board';
 import { socket } from './features/socket';
 import { EMITTERES, LOADING } from './features/enums';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadingSelector, setLoading, setMiddleCheckers, setOutsideCheckers, setPoints, setState } from './features/slices/boardSlice';
+import { setMiddleCheckers, setOutsideCheckers, setPoints } from './features/slices/boardSlice';
 import { setCurrentPlayer, setPlayers } from './features/slices/playersSlice';
 import { setDices } from './features/slices/dicesSlice';
 import { setMove } from './features/slices/moveSlice';
-import { screenColorSelector, setScreenColor } from './features/slices/gameSlice';
+import { loadingSelector, screenColorSelector, setScreenColor, setState, setLoading } from './features/slices/gameSlice';
 
 const App = () => {
   const dispatch = useDispatch()
@@ -71,8 +71,8 @@ const App = () => {
       setGame(game)
     }
 
-    const onNexPlayer = (currentPlayer) => {
-      dispatch(setCurrentPlayer(currentPlayer))
+    const onNexPlayer = (game) => {
+      setGame(game)
     }
 
     const onMoveOut = (game) => {

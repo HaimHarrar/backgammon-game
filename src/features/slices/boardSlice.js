@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { COLORS, STATES } from '../enums'
+import { COLORS } from '../enums'
 
 const initialState = {
     // points: {
@@ -36,8 +36,6 @@ const initialState = {
         [COLORS.PLAYER_1]: 4,
         [COLORS.PLAYER_2]: 3,
     },
-    loading: null,
-    state: STATES.START
 }
 
 const boardSlice = createSlice({
@@ -53,19 +51,12 @@ const boardSlice = createSlice({
         setOutsideCheckers: (state, action) => {
             state.outsideCheckers = action.payload
         },
-        setLoading: (state, action) => {
-            state.loading = action.payload
-        },
-        setState: (state, action) => {
-            state.state = action.payload
-        }
+
     }
 })
 
 export default boardSlice.reducer
-export const { setPoints, setLoading, setMiddleCheckers, setOutsideCheckers, setState} = boardSlice.actions
+export const { setPoints, setMiddleCheckers, setOutsideCheckers} = boardSlice.actions
 export const pointsSelector = (state) => state.board.points
 export const middleCheckersSelector = (state) => state.board.middleCheckers
 export const outsideCheckersSelector = (state) => state.board.outsideCheckers
-export const loadingSelector = (state) => state.board.loading
-export const stateSelector = (state) => state.board.state

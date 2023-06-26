@@ -16,11 +16,11 @@ export class Game {
     };
 
     constructor(player1: Player, player2: Player) {
-        this.players[PLAYERS.PLAYER_1] = new Player();
+        // this.players[PLAYERS.PLAYER_1] = new Player();
         this.players[PLAYERS.PLAYER_1].setName(player1.color === PLAYERS.PLAYER_1? player1.name: player2.name)
         this.players[PLAYERS.PLAYER_1].setColor(player1.color === PLAYERS.PLAYER_1? player1.color: player2.color)
 
-        this.players[PLAYERS.PLAYER_2] = new Player();
+        // this.players[PLAYERS.PLAYER_2] = new Player();
         this.players[PLAYERS.PLAYER_2].setName(player2.color === PLAYERS.PLAYER_2? player2.name: player1.name)
         this.players[PLAYERS.PLAYER_2].setColor(player2.color === PLAYERS.PLAYER_2? player2.color: player1.color)
         
@@ -29,7 +29,7 @@ export class Game {
         this.dices[1] = new Dice
         this.dices[2] = new Dice
         this.currentPlayer = PLAYERS.PLAYER_2;
-        this.state = STATES.MIDDLE;
+        this.state = STATES.START;
         this.move = new Move();
     }
 
@@ -99,7 +99,7 @@ export class Game {
         const startingPoint = playerColor === PLAYERS.PLAYER_1? 1: 19;
         const finishPoint = playerColor === PLAYERS.PLAYER_1? 6: 24;
         for(let i = startingPoint; i <= finishPoint; i++){
-            if(this.board.points[i].checkers === 0 || this.board.points[i].color === playerColor){
+            if(this.board.points[i].checkers < 2 || this.board.points[i].color === playerColor){
                 return true;
             }
         }
@@ -107,19 +107,34 @@ export class Game {
     }
 
     isDicesLigalInBackToBoard(playerColor: PLAYERS){
-        return ( Object.values(this.dices).every(dice => this.board.points[dice.value].checkers === 0 || 
-            this.board.points[playerColor === PLAYERS.PLAYER_1? dice.value: 25 - (25 - dice.value)].color === playerColor))
-    }
+        return ( Object.values(this.dices).some(dice =>this.board.points[playerColor === PLAYERS.PLAYER_1? dice.value:25 - dice.value].checkers < 2 || 
+            this.board.points[playerColor === PLAYERS.PLAYER_1? dice.value: 25 - dice.value].color === playerColor))
+    } 
 
     isMoveOutLigal(from: number, playerColor: PLAYERS) {
-        const startingPoint = playerColor === PLAYERS.PLAYER_1? 1: 19;
+        const startingPoint = playerColor === PLAYERS.PLAYER_1? 1: 7;
+        const endingPoint = playerColor === PLAYERS.PLAYER_1? 18: 24;
         
-        for(let i = startingPoint; i < from; i++){
-            if(this.board.points[i].checkers > 0){
+        for(let i = startingPoint; i <= endingPoint; i++){
+            if( this.board.points[i].color === playerColor && this.board.points[i].checkers > 0){
                 return false
             }
         }
         return true;
+    }
+
+    isDicesGreaterThanDistance(distance: number) {
+        return Object.values(this.dices).some(dice => dice.value > distance)
+    }
+
+    isDicesPointValuesEmpty(distance: number){
+        return Object.values(this.dices).some((dice) =>{
+             dice.value > distance && dice.value && !this.board.points[dice.value].checkers
+            })
+    }
+
+    initDices(){
+        Object.keys(this.dices).forEach(k => this.dices[Number(k)].initDice())
     }
 
 } 

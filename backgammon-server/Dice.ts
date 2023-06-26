@@ -10,8 +10,8 @@ export class Dice {
     }
 
     rollDice(){
-        this.value = Math.floor(Math.random() * Dice.MAX + Dice.MIN)
-    }
+        this.value = Math.floor(Math.random() * Dice.MAX + Dice.MIN);
+    } 
 
     initDice(){
         this.value = 0;
