@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect } from 'react'
 import styles from './DicesHolder.module.scss'
 import { useSelector } from 'react-redux'
 import { dicesSelector } from '../../features/slices/dicesSlice'
@@ -14,8 +14,22 @@ const DicesHolder = ({ bgc }) => {
     return bgc === COLORS.PLAYER_1 ? COLORS.PLAYER_2 : COLORS.PLAYER_1
   }, [bgc])
 
+  useEffect(() =>{
+    const onkeyDown = (e) =>{
+        if(e.key === 'Enter'){
+            onRoll()
+        }
+    }
+    window.addEventListener("keydown", onkeyDown)
+    return () => {
+        window.removeEventListener("keydown", onkeyDown)
+    }
+})
+
   const onRoll = () => {
-    socket.emit(EMITTERES.ROLL_DICES)
+    if(Object.values(dices).every(dice => !dice.value)){
+      socket.emit(EMITTERES.ROLL_DICES)
+    }
     // if(state === STATES.START){
     //   socket.emit(EMITTERES.FIRST_ROLL)
     // }else{

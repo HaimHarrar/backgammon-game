@@ -3,7 +3,9 @@ export const COLORS = {
     PLAYER_2: "black",
     SELECTED: "blue",
     EVEN_POINT: "#a4693c",
+    EVEN_POINT_SELECTED: "#a4693c77",
     ODD_POINT: "#493325",
+    ODD_POINT_SELECTED: "#49332577",
     BOARD: "#f7ecc8"
 }
 
@@ -18,6 +20,7 @@ export const SIZES = {
 
 export const LOADING = {
     WAITING_FOR_PLAYER: 'Waiting for player...',
+    PLAYER_LEFT: 'your player had left',
     ERROR: 'There is some error',
     LOADING: 'Loading',
     SUCCESS: 'Success'

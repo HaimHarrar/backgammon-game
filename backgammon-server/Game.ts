@@ -16,15 +16,10 @@ export class Game {
     };
 
     constructor(player1: Player, player2: Player) {
-        // this.players[PLAYERS.PLAYER_1] = new Player();
-        this.players[PLAYERS.PLAYER_1].setName(player1.color === PLAYERS.PLAYER_1? player1.name: player2.name)
-        this.players[PLAYERS.PLAYER_1].setColor(player1.color === PLAYERS.PLAYER_1? player1.color: player2.color)
-
-        // this.players[PLAYERS.PLAYER_2] = new Player();
-        this.players[PLAYERS.PLAYER_2].setName(player2.color === PLAYERS.PLAYER_2? player2.name: player1.name)
-        this.players[PLAYERS.PLAYER_2].setColor(player2.color === PLAYERS.PLAYER_2? player2.color: player1.color)
-        
-        // this.players[PLAYERS.PLAYER_2] = player2.color === PLAYERS.PLAYER_2?  new Player(player2.name, player2.color): new Player(player1.name, player1.color);
+        this.players[PLAYERS.PLAYER_1].setName(player1.name)
+        this.players[PLAYERS.PLAYER_1].setColor(player1.color)
+        this.players[PLAYERS.PLAYER_2].setName(player2.name)
+        this.players[PLAYERS.PLAYER_2].setColor(player2.color)
         this.board.initBoard();
         this.dices[1] = new Dice
         this.dices[2] = new Dice
@@ -127,10 +122,16 @@ export class Game {
         return Object.values(this.dices).some(dice => dice.value > distance)
     }
 
-    isDicesPointValuesEmpty(distance: number){
-        return Object.values(this.dices).some((dice) =>{
-             dice.value > distance && dice.value && !this.board.points[dice.value].checkers
-            })
+    isGreaterPointsEmpty(point: number, playerColor: PLAYERS){
+        let startingPoint = playerColor === PLAYERS.PLAYER_1? 19: 6;
+        const endingPoint = point
+        while(startingPoint != endingPoint){
+            if(this.board.points[startingPoint].checkers > 0 && this.board.points[startingPoint].color === playerColor){
+                return false;
+            }
+            startingPoint += playerColor === PLAYERS.PLAYER_1? 1: -1;
+        }
+        return true
     }
 
     initDices(){

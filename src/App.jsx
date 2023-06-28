@@ -44,7 +44,7 @@ const App = () => {
 
     const onLoading = (res) => {
       dispatch(setLoading(res.message))
-      dispatch(setScreenColor(res.player.color))
+      dispatch(setScreenColor(res.player?.color))
     }
 
     const onRoll = (dices) => {
@@ -112,7 +112,7 @@ const App = () => {
   // }, [])
 
   const componentToRender = useMemo(() => {
-    return loading === LOADING.SUCCESS?<Board />:loading === LOADING.WAITING_FOR_PLAYER? <Loading text={LOADING.WAITING_FOR_PLAYER}/>:<Login />
+    return loading === LOADING.SUCCESS?<Board />:loading === LOADING.WAITING_FOR_PLAYER ||loading === LOADING.PLAYER_LEFT? <Loading text={loading}/>:<Login />
   }, [loading]) 
 
   return (

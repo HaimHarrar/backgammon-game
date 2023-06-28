@@ -11,6 +11,7 @@ import { currentPlayerSelector, playersSelector } from '../../features/slices/pl
 import classNames from 'classnames'
 import { socket } from '../../features/socket'
 import { moveSelector } from '../../features/slices/moveSlice'
+import { screenColorSelector } from '../../features/slices/gameSlice'
 
 const Board = () => {
     const points = useSelector(pointsSelector)
@@ -18,7 +19,7 @@ const Board = () => {
     const currentPlayer = useSelector(currentPlayerSelector)
     const players = useSelector(playersSelector)
     const move = useSelector(moveSelector)
-
+    const screenColor = useSelector(screenColorSelector)
     const handlePlay = (index) => {
         if(middleCheckers[currentPlayer.color]){
             socket.emit(EMITTERES.BACK_TO_BOARD, index)
@@ -30,7 +31,6 @@ const Board = () => {
             socket.emit(EMITTERES.MOVE, index)
         }
     }
-
 
     return (
         <div className={styles.board}>
@@ -55,7 +55,7 @@ const Board = () => {
                 <MiddleLine bgc="black" />
             </div>
             <div className={styles.outsideLine} onClick={() => socket.emit(EMITTERES.MOVE_OUT)}>
-                <OutsideLine bgc="black" />
+                <OutsideLine bgc={screenColor === COLORS.PLAYER_1? COLORS.PLAYER_2: COLORS.PLAYER_1} />
             </div>
 
             {

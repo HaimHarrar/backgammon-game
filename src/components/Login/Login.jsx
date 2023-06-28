@@ -10,7 +10,9 @@ const Login = () => {
     const dispatch = useDispatch()
     const inputRef = useRef()
     const sendUsername = () => {
-        socket.emit(EMITTERES.LOGIN, username)
+        socket.emit(EMITTERES.LOGIN, username, (room) => {
+            console.log("joined to rooom " + room);
+        })
         dispatch(setLoading(LOADING.WAITING_FOR_PLAYER))
         setUsername("")
     }
@@ -28,7 +30,6 @@ const Login = () => {
     })
 
     const onkeyPress = (e) => {
-        console.log(e);
         setUsername(e.target.value)
     }
 

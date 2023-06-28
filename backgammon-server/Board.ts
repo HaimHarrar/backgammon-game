@@ -20,14 +20,16 @@ export class Board{
 
     initBoard() {
         this.points = this.points =  this.points = {
-            12: { checkers: 2, color: PLAYERS.PLAYER_2 },
-            18: { checkers: 5, color: PLAYERS.PLAYER_2 },
-            22: { checkers: 3, color: PLAYERS.PLAYER_1 },
-            23: { checkers: 5, color: PLAYERS.PLAYER_1 },
-            24: { checkers: 2, color: PLAYERS.PLAYER_1 }
+            1: { checkers: 2, color: PLAYERS.PLAYER_1 },
+            6: { checkers: 5, color: PLAYERS.PLAYER_2 },
+            8: { checkers: 3, color: PLAYERS.PLAYER_2 },
+            12: { checkers: 5, color: PLAYERS.PLAYER_1 },
+            13: { checkers: 5, color: PLAYERS.PLAYER_2 },
+            17: { checkers: 3, color: PLAYERS.PLAYER_1 },
+            19: { checkers: 5, color: PLAYERS.PLAYER_1 },
+            24: { checkers: 2, color: PLAYERS.PLAYER_2 }
         }
-        this.middleCheckers[PLAYERS.PLAYER_2] = 1; 
-       
+              
         for(let k = 1; k < 24; k++){
             if(!this.points[k]){
                 this.points[k] = { checkers: 0, color: null }

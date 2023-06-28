@@ -4,6 +4,7 @@ export enum PLAYERS{
 
 export const LOADING = {
     WAITING_FOR_PLAYER: 'Waiting for player...',
+    PLAYER_LEFT: 'your player had left',
     ERROR: 'There is some error',
     LOADING: 'Loading',
     SUCCESS: 'Success'
