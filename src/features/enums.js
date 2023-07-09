@@ -18,9 +18,10 @@ export const SIZES = {
     POINT_WIDTH: 50
 }
 
-export const LOADING = {
+export const MESSAGES = {
     WAITING_FOR_PLAYER: 'Waiting for player...',
     PLAYER_LEFT: 'your player had left',
+    WINNER: 'Winner',
     ERROR: 'There is some error',
     LOADING: 'Loading',
     SUCCESS: 'Success'
@@ -28,8 +29,12 @@ export const LOADING = {
 
 export const EMITTERES = {
     CONNECTION: 'connection',
+    DISCONNECT: 'disconnect',
+    PLAYER_LEFT: 'Player left',
+    WAITING_FOR_PLAYER: 'Waiting for player',
+    MESSAGE: 'loading',
+    WINNER: 'winner',
     LOGIN: 'Login',
-    LOADING: 'loading',
     LOGOUT: 'Logout',
     MOVE: 'Move',
     SELECT: 'Select',

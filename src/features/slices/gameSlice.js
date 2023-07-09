@@ -3,7 +3,7 @@ import { STATES } from '../enums'
 
 const initialState = {
     screenColor: '',
-    loading: null,
+    message: null,
     state: STATES.START
 }
 
@@ -14,8 +14,11 @@ const gameSlice = createSlice({
         setScreenColor: (state, action) => {
             state.screenColor = action.payload
         },
-        setLoading: (state, action) => {
-            state.loading = action.payload
+        setMessage: (state, action) => {
+            state.message = action.payload
+        },
+        clearMessage: (state) => {
+            state.message = ''
         },
         setState: (state, action) => {
             state.state = action.payload
@@ -24,7 +27,7 @@ const gameSlice = createSlice({
 })
 
 export default gameSlice.reducer
-export const {setScreenColor, setLoading, setState} = gameSlice.actions
+export const {setScreenColor, setMessage, setState, clearMessage} = gameSlice.actions
 export const screenColorSelector = (state) => state.game.screenColor
-export const loadingSelector = (state) => state.game.loading
+export const messageSelector = (state) => state.game.message
 export const stateSelector = (state) => state.game.state

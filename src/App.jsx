@@ -1,20 +1,21 @@
 import { useEffect, useMemo } from 'react';
 import './App.css';
+import Message from './components/Message/Message';
 import Login from './components/Login/Login';
-import Loading from './components/Loading/Loading';
 import Board from './components/Board/Board';
 import { socket } from './features/socket';
-import { EMITTERES, LOADING } from './features/enums';
+import { EMITTERES, MESSAGES } from './features/enums';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMiddleCheckers, setOutsideCheckers, setPoints } from './features/slices/boardSlice';
 import { setCurrentPlayer, setPlayers } from './features/slices/playersSlice';
 import { setDices } from './features/slices/dicesSlice';
 import { setMove } from './features/slices/moveSlice';
-import { loadingSelector, screenColorSelector, setScreenColor, setState, setLoading } from './features/slices/gameSlice';
+import { messageSelector, screenColorSelector, setScreenColor, setState, setMessage } from './features/slices/gameSlice';
+import TwoLogin from './components/TwoLogin/TwoLogin';
 
 const App = () => {
   const dispatch = useDispatch()
-  const loading = useSelector(loadingSelector)
+  const message = useSelector(messageSelector)
   const screenColor = useSelector(screenColorSelector)
   useEffect(() => {
     socket.connect()
@@ -26,7 +27,7 @@ const App = () => {
       dispatch(setPoints(game.board.points))
       dispatch(setMiddleCheckers(game.board.middleCheckers))
       dispatch(setOutsideCheckers(game.board.outsideCheckders))
-      
+    
       dispatch(setPlayers(game.players))
       dispatch(setCurrentPlayer(game.currentPlayer))
 
@@ -39,11 +40,11 @@ const App = () => {
     const onLogin = (game) => {
       console.log(game);
       setGame(game)
-      dispatch(setLoading(LOADING.SUCCESS))
+      dispatch(setMessage(MESSAGES.SUCCESS))
     }
 
-    const onLoading = (res) => {
-      dispatch(setLoading(res.message))
+    const onWaiting = (res) => {
+      dispatch(setMessage(res.message))
       dispatch(setScreenColor(res.player?.color))
     }
 
@@ -79,9 +80,19 @@ const App = () => {
       setGame(game)
     }
 
+    const onWinner = (message) => {
+      dispatch(setMessage(message))
+    }
+
+    const onPlayerLeft = (message) => {
+      dispatch(setMessage(message))
+    }
+
     socket.on(EMITTERES.CONNECTION, onConnection)  ;
     socket.on(EMITTERES.LOGIN, onLogin);
-    socket.on(EMITTERES.LOADING, onLoading);
+    socket.on(EMITTERES.WAITING_FOR_PLAYER, onWaiting);
+    socket.on(EMITTERES.WINNER, onWinner);
+    socket.on(EMITTERES.PLAYER_LEFT, onPlayerLeft);
     socket.on(EMITTERES.ROLL_DICES, onRoll);
     socket.on(EMITTERES.FIRST_ROLL, onFirstRoll);
     socket.on(EMITTERES.SELECT, onSelect);
@@ -94,7 +105,9 @@ const App = () => {
     return () => {
       socket.off(EMITTERES.CONNECTION, onConnection);
       socket.off(EMITTERES.LOGIN, onLogin);
-      socket.off(EMITTERES.LOADING, onLoading);
+      socket.off(EMITTERES.WAITING_FOR_PLAYER, onWaiting);
+      socket.off(EMITTERES.WINNER, onWinner);
+      socket.off(EMITTERES.PLAYER_LEFT, onPlayerLeft);
       socket.off(EMITTERES.ROLL_DICES, onRoll);
       socket.off(EMITTERES.FIRST_ROLL, onFirstRoll);
       socket.off(EMITTERES.SELECT, onSelect);
@@ -112,14 +125,16 @@ const App = () => {
   // }, [])
 
   const componentToRender = useMemo(() => {
-    return loading === LOADING.SUCCESS?<Board />:loading === LOADING.WAITING_FOR_PLAYER ||loading === LOADING.PLAYER_LEFT? <Loading text={loading}/>:<Login />
-  }, [loading]) 
+    // return <TwoLogin />
+    return message === MESSAGES.SUCCESS? <Board />: message?.length? <Message text={message}/>: <Login />
+  }, [message])
 
   return (
     <div style={{backgroundColor: screenColor}} className="app">
       {
         componentToRender
       }
+      <div class='next-player-btn' onClick={() => socket.emit(EMITTERES.NEXT_PLAYER)}>next player</div>
     </div>
   );
 }

@@ -24,7 +24,7 @@ const DicesHolder = ({ bgc }) => {
     return () => {
         window.removeEventListener("keydown", onkeyDown)
     }
-})
+}, [])
 
   const onRoll = () => {
     if(Object.values(dices).every(dice => !dice.value)){

@@ -2,10 +2,11 @@ export enum PLAYERS{
     PLAYER_1 = "white", PLAYER_2="black"
 }
 
-export const LOADING = {
+export const MESSAGES = {
     WAITING_FOR_PLAYER: 'Waiting for player...',
-    PLAYER_LEFT: 'your player had left',
+    PLAYER_LEFT: (name: string) => `${name} had left`,
     ERROR: 'There is some error',
+    WINNER: (name: string) => `${name} won`,
     LOADING: 'Loading',
     SUCCESS: 'Success'
 }
@@ -13,7 +14,10 @@ export const LOADING = {
 export const EMITTERES = {
     CONNECTION: 'connection',
     DISCONNECT: 'disconnect',
-    LOADING: 'loading',
+    PLAYER_LEFT: 'Player left',
+    WAITING_FOR_PLAYER: 'Waiting for player',
+    MESSAGE: 'loading',
+    WINNER: 'winner',
     LOGIN: 'Login',
     LOGOUT: 'Logout',
     MOVE: 'Move',
@@ -24,10 +28,11 @@ export const EMITTERES = {
     ROLL_DICES: 'Roll dices',
     FIRST_ROLL: 'First roll',
     STOMP: 'Stomp',
-    NEXT_PLAYER: 'Next player'
+    NEXT_PLAYER: 'Next player',
+    TWO_LOGIN: 'two login'
 }
 
-export const STATES = {
+export const STATES = { 
     START: 'Start',
     MIDDLE: 'Middle',
     END: 'End'

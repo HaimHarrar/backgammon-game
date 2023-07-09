@@ -1,7 +1,7 @@
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import { instrument } from '@socket.io/admin-ui'
-import { PLAYERS, EMITTERES, LOADING } from './enums';
+import { PLAYERS, EMITTERES, MESSAGES } from './enums';
 import { Player } from './Player';
 import { Game } from './Game';
 const port = 4000
@@ -9,7 +9,10 @@ const httpServer = createServer()
 const io = new Server(httpServer, {
     cors: {
         origin: ["https://admin.socket.io", "http://localhost:3000"],
-        credentials: true
+        credentials: true,
+    },
+    connectionStateRecovery: {
+        maxDisconnectionDuration: Infinity
     }
 })
 instrument(io, { 
@@ -39,20 +42,24 @@ io.on(EMITTERES.CONNECTION, (socket) => {
             roomsCount++;
             players[socket.id].setColor(PLAYERS.PLAYER_2)
             game = new Game(player1, players[socket.id]);
-            socket.emit(EMITTERES.LOADING, {message: LOADING.WAITING_FOR_PLAYER, player: players[socket.id]})
+            socket.emit(EMITTERES.WAITING_FOR_PLAYER, {message: MESSAGES.WAITING_FOR_PLAYER, player: players[socket.id]})
             io.sockets.in(roomIndex).emit(EMITTERES.LOGIN, game)
         }else {
             socket.join(roomIndex)
             func(roomIndex)
             player1 = players[socket.id]
             player1.setColor(PLAYERS.PLAYER_1)
-            socket.emit(EMITTERES.LOADING, {message: LOADING.WAITING_FOR_PLAYER, player: players[socket.id]}) 
+            socket.emit(EMITTERES.WAITING_FOR_PLAYER, {message: MESSAGES.WAITING_FOR_PLAYER, player: players[socket.id]}) 
         }
 
         socket.on(EMITTERES.DISCONNECT, () => {
             console.info(EMITTERES.DISCONNECT);
             delete players[socket.id]
-            io.sockets.in(roomIndex).emit(EMITTERES.LOADING, {message: LOADING.PLAYER_LEFT, player: players[socket.id]}) 
+            io.sockets.in(roomIndex).emit(EMITTERES.PLAYER_LEFT, MESSAGES.PLAYER_LEFT(players[socket.id].name)) 
+        })
+
+        socket.on(EMITTERES.TWO_LOGIN, () => {
+
         })
 
         socket.on(EMITTERES.FIRST_ROLL, () => {
@@ -60,30 +67,41 @@ io.on(EMITTERES.CONNECTION, (socket) => {
             game.firstRolling(socket.id)
             game.whoIsStarting()
             io.sockets.in(roomIndex).emit(EMITTERES.FIRST_ROLL, game)
-        }) 
+        })
     
-        socket.on(EMITTERES.ROLL_DICES, () => {
-            console.info(EMITTERES.ROLL_DICES)
+        socket.on(EMITTERES.ROLL_DICES, () => { 
+            console.info(EMITTERES.ROLL_DICES);
             const nextPlayer = () => {
                 setTimeout(() => {
-                    game.initDices(); 
+                    game.resetDices(); 
                     game.nextPlayer();
                     io.sockets.in(roomIndex).emit(EMITTERES.NEXT_PLAYER, game)
                 }, 1000)
             }
+ 
             if(players[socket.id].color === game.currentPlayer){
+                game.rollDices();
                 if(game.board.middleCheckers[players[socket.id].color]){
-                    if(game.isBackToBoardOptional(players[socket.id].color)){
-                        game.rollDices()
+                    const backToBoardOptions = game.backToBoardOptions(players[socket.id].color)
+                    if(backToBoardOptions.length){
                         io.sockets.in(roomIndex).emit(EMITTERES.ROLL_DICES, game.dices)
-                        if(!game.isDicesLigalInBackToBoard(players[socket.id].color)){
+                        if(Object.values(game.dices).every(dice => !backToBoardOptions.some(val => val === dice.value))){
+                            nextPlayer()
+                        }else if(game.board.middleCheckers[players[socket.id].color] >= Object.keys(game.dices).length){
+                            Object.keys(game.dices).forEach(k => {
+                            console.log(Object.keys(game.dices).length);
+                            if(backToBoardOptions.some(option => game.dices[Number(k)].value === option)){
+                                    setTimeout(() => {
+                                        game.backToBoard(players[socket.id].color === PLAYERS.PLAYER_1?game.dices[Number(k)].value: 25 - game.dices[Number(k)].value, players[socket.id].color);
+                                    }, 1000)
+                                }
+                            })
                             nextPlayer();
                         }
                     }else{
                         nextPlayer();
                     }
                 }else{
-                    game.rollDices();
                     io.sockets.in(roomIndex).emit(EMITTERES.ROLL_DICES, game.dices)
                 }
             }
@@ -108,7 +126,7 @@ io.on(EMITTERES.CONNECTION, (socket) => {
             console.info(EMITTERES.MOVE)
             const distance = to - game.move.from
              
-            if(game.isDistanceInDices(distance, players[socket.id].color)){
+            if(game.isMoveLigal(to, players[socket.id].color) && game.isDistanceInDices(distance, players[socket.id].color)){
                 if((game.board.points[to].color && game.board.points[to].color !== game.move.color) && (game.board.points[to].checkers === 1)){
                     game.board.points[to].checkers = 0;
                     game.board.middleCheckers[game.currentPlayer === PLAYERS.PLAYER_1? PLAYERS.PLAYER_2: PLAYERS.PLAYER_1]++
@@ -130,23 +148,14 @@ io.on(EMITTERES.CONNECTION, (socket) => {
             console.info(EMITTERES.BACK_TO_BOARD);
             
             if(game.isBackToBoardLigalPoint(to, players[socket.id].color)){
-                if(game.isStomp(to)){ 
-                    game.board.points[to].checkers = 0;
-                    game.board.middleCheckers[game.currentPlayer === PLAYERS.PLAYER_1? PLAYERS.PLAYER_2: PLAYERS.PLAYER_1]++
-                }
-                game.board.middleCheckers[game.currentPlayer]--
-                game.move.to = to;
-                game.board.points[to].checkers++;
-                game.board.points[to].color = game.currentPlayer;
-                game.deleteDiceByValue(game.currentPlayer === PLAYERS.PLAYER_2? 25 - to: Number(to))
+                game.backToBoard(to, players[socket.id].color);
                 io.sockets.in(roomIndex).emit(EMITTERES.BACK_TO_BOARD, game) 
             } 
         }) 
     
         socket.on(EMITTERES.MOVE_OUT, () => {
-            console.info(EMITTERES.MOVE_OUT);
-            const distance = (players[socket.id].color === PLAYERS.PLAYER_1? 25: 0) - game.move.from
-    
+            console.info(EMITTERES.MOVE_OUT); 
+            const distance = (players[socket.id].color === PLAYERS.PLAYER_1? 25: 0) - game.move.from;
             const final = () => {
                 game.board.outsideCheckersAddOne(players[socket.id].color)
                 game.board.pointSubOne(game.move.from)
@@ -155,7 +164,12 @@ io.on(EMITTERES.CONNECTION, (socket) => {
                     game.nextPlayer()
                 }
                 io.sockets.in(roomIndex).emit(EMITTERES.MOVE_OUT, game)
+
+                if(game.isThereWinner()){
+                    io.sockets.in(roomIndex).emit(EMITTERES.WINNER, MESSAGES.WINNER(players[socket.id].name));
+                }
             }
+
             if(game.isMoveOutLigal(game.move.from, players[socket.id].color)){
                 if(game.isDistanceInDices(distance, players[socket.id].color)){
                     game.deleteDiceByValue(distance)
@@ -169,6 +183,13 @@ io.on(EMITTERES.CONNECTION, (socket) => {
                 }
             }
         })
+
+        socket.on(EMITTERES.NEXT_PLAYER, () => {
+            console.info(EMITTERES.NEXT_PLAYER);
+            game.resetDices();
+            game.nextPlayer(); 
+            io.sockets.in(roomIndex).emit(EMITTERES.NEXT_PLAYER, game)
+        })
                 
     })
 
@@ -177,4 +198,8 @@ io.on(EMITTERES.CONNECTION, (socket) => {
     // })
 } )
 
-io.listen(port)
+io.listen(port);
+
+const ifAllDiceUsed = () => {
+
+}

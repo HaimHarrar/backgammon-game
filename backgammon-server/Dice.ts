@@ -3,9 +3,9 @@ export class Dice {
     static MAX = 6;
     public value: number = 0;
 
-    constructor(value1?: number){
-        if(value1){
-            this.value = value1
+    constructor(value?: number){
+        if(value){
+            this.value = value
         }
     }
 

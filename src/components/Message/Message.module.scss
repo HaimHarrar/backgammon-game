@@ -1,4 +1,4 @@
-.loading{
+.message{
     height: 70vh;
     width: 70vw;
     display: flex;
@@ -6,7 +6,7 @@
     align-items: center;
     background-color: bisque;
 
-    .loadingTitle{
+    .messageTitle{
         padding: 20px;
         p{
             font-size: 5em;

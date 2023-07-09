@@ -10,3 +10,15 @@
     justify-content: center;
     align-items: center;
 }
+
+.next-player-btn{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #777;
+    border: 1px solid black;
+    border-radius: 3px;
+    padding: 5px;
+    margin: 3px;
+    cursor: pointer;
+}

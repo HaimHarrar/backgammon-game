@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styles from './Login.module.scss'
 import { socket } from '../../features/socket'
-import { EMITTERES, LOADING } from '../../features/enums'
+import { EMITTERES, MESSAGES } from '../../features/enums'
 import { useDispatch } from 'react-redux'
-import { setLoading } from '../../features/slices/gameSlice'
+import { setMessage } from '../../features/slices/gameSlice'
 
 const Login = () => {
     const [username, setUsername] = useState('')
@@ -13,7 +13,7 @@ const Login = () => {
         socket.emit(EMITTERES.LOGIN, username, (room) => {
             console.log("joined to rooom " + room);
         })
-        dispatch(setLoading(LOADING.WAITING_FOR_PLAYER))
+        dispatch(setMessage(MESSAGES.WAITING_FOR_PLAYER))
         setUsername("")
     }
 
