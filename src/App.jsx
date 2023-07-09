@@ -11,7 +11,6 @@ import { setCurrentPlayer, setPlayers } from './features/slices/playersSlice';
 import { setDices } from './features/slices/dicesSlice';
 import { setMove } from './features/slices/moveSlice';
 import { messageSelector, screenColorSelector, setScreenColor, setState, setMessage } from './features/slices/gameSlice';
-import TwoLogin from './components/TwoLogin/TwoLogin';
 
 const App = () => {
   const dispatch = useDispatch()

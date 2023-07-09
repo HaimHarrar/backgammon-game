@@ -13,20 +13,8 @@ const DicesHolder = ({ bgc }) => {
   const oppositeColor = useMemo(() => {
     return bgc === COLORS.PLAYER_1 ? COLORS.PLAYER_2 : COLORS.PLAYER_1
   }, [bgc])
-
-  useEffect(() =>{
-    const onkeyDown = (e) =>{
-        if(e.key === 'Enter'){
-            onRoll()
-        }
-    }
-    window.addEventListener("keydown", onkeyDown)
-    return () => {
-        window.removeEventListener("keydown", onkeyDown)
-    }
-}, [])
-
-  const onRoll = () => {
+  
+  const onRoll = useMemo(() => {
     if(Object.values(dices).every(dice => !dice.value)){
       socket.emit(EMITTERES.ROLL_DICES)
     }
@@ -35,7 +23,20 @@ const DicesHolder = ({ bgc }) => {
     // }else{
     //   socket.emit(EMITTERES.ROLL_DICES)
     // }
-  }
+  }, [dices])
+
+  useEffect(() =>{
+    const onkeyDown = (e) =>{
+      if(e.key === 'Enter'){
+        onRoll()
+      }
+    }
+    window.addEventListener("keydown", onkeyDown)
+    return () => {
+        window.removeEventListener("keydown", onkeyDown)
+    }
+}, [onRoll])
+
 
   return (
     <div style={{ backgroundColor: bgc, borderColor: oppositeColor }} className={styles.diceHolder}>
