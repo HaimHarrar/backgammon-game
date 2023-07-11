@@ -29,8 +29,11 @@ export class Game {
     }
 
     isMoveLigal(to: number, playerColor: PLAYERS){
+        if(to <= 0 || to >= 25){
+            return false;
+        }
         if(this.board.points[to].color !== playerColor && this.board.points[to].checkers > 1){
-            return false
+            return false;
         }
         return true;
     }
@@ -57,8 +60,8 @@ export class Game {
     resetDices() {
         delete this.dices[3]
         delete this.dices[4]
-        this.dices[1].value = 0
-        this.dices[2].value = 0
+        this.dices[1].initDice();
+        this.dices[2].initDice();
     }
 
     rollDices() {
@@ -88,7 +91,7 @@ export class Game {
     }
 
     isAllDicesUsed(){
-        return Object.values(this.dices).every(dice => !dice.value)
+        return Object.values(this.dices).every(dice => !dice.isRelevant)
     }
 
     isStomp(to: number){
@@ -128,7 +131,7 @@ export class Game {
             this.board.points[playerColor === PLAYERS.PLAYER_1? dice.value: 25 - dice.value].color === playerColor))
     } 
 
-    isMoveOutLigal(from: number, playerColor: PLAYERS) {
+    isMoveOutLigal(playerColor: PLAYERS) {
         const startingPoint = playerColor === PLAYERS.PLAYER_1? 1: 7;
         const endingPoint = playerColor === PLAYERS.PLAYER_1? 18: 24;
         
@@ -188,8 +191,32 @@ export class Game {
         return false
     }
 
-    isThereOnlyOneOptionOnMoveOut(playerColor: PLAYERS){
-        let options = 0
+    isDicesRelevant(playerColor: PLAYERS){
+        Object.keys(this.dices).forEach(k => {
+            if(this.dices[Number(k)].value){
+                let isRelevant: boolean = false;
+
+                if(this.board.middleCheckers[playerColor]){
+                    if(this.isBackToBoardLigalPoint(playerColor === PLAYERS.PLAYER_1? this.dices[Number(k)].value: 25 - this.dices[Number(k)].value, playerColor)){
+                        isRelevant = true;
+                    }
+                }else{
+                    for(let i = 1; i < 25; i++){ 
+                        if(this.board.points[i].color === playerColor && this.board.points[i].checkers > 0 ){
+                            if(this.isMoveLigal(i + this.dices[Number(k)].value * (playerColor === PLAYERS.PLAYER_1? 1: -1), playerColor)){
+                                isRelevant = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                this.dices[Number(k)].setIsRelevant(isRelevant);
+            }else{
+                this.dices[Number(k)].setIsRelevant(false);
+            }
+        })
+        return Object.values(this.dices).some(val => val.isRelevant);
     }
 
-} 
+
+}

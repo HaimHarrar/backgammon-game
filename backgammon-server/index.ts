@@ -26,8 +26,6 @@ let player1:Player;
 let roomsCount: number = 1;
 io.on(EMITTERES.CONNECTION, (socket) => {
     console.info(EMITTERES.CONNECTION);
-    
-    socket.emit(EMITTERES.CONNECTION, "hello")
 
     socket.on(EMITTERES.LOGIN, (name: string, func: any) => {
         // Login
@@ -54,8 +52,8 @@ io.on(EMITTERES.CONNECTION, (socket) => {
 
         socket.on(EMITTERES.DISCONNECT, () => {
             console.info(EMITTERES.DISCONNECT);
-            delete players[socket.id]
             io.sockets.in(roomIndex).emit(EMITTERES.PLAYER_LEFT, MESSAGES.PLAYER_LEFT(players[socket.id].name)) 
+            delete players[socket.id]
         })
 
         socket.on(EMITTERES.TWO_LOGIN, () => {
@@ -75,34 +73,38 @@ io.on(EMITTERES.CONNECTION, (socket) => {
                 setTimeout(() => {
                     game.resetDices(); 
                     game.nextPlayer();
-                    io.sockets.in(roomIndex).emit(EMITTERES.NEXT_PLAYER, game)
+                    io.sockets.in(roomIndex).emit(EMITTERES.NEXT_PLAYER, game);
                 }, 1000)
             }
- 
+
             if(players[socket.id].color === game.currentPlayer){
                 game.rollDices();
-                if(game.board.middleCheckers[players[socket.id].color]){
-                    const backToBoardOptions = game.backToBoardOptions(players[socket.id].color)
-                    if(backToBoardOptions.length){
-                        io.sockets.in(roomIndex).emit(EMITTERES.ROLL_DICES, game.dices)
-                        if(Object.values(game.dices).every(dice => !backToBoardOptions.some(val => val === dice.value))){
-                            nextPlayer()
-                        }else if(game.board.middleCheckers[players[socket.id].color] >= Object.keys(game.dices).length){
-                            Object.keys(game.dices).forEach(k => {
-                            console.log(Object.keys(game.dices).length);
-                            if(backToBoardOptions.some(option => game.dices[Number(k)].value === option)){
-                                    setTimeout(() => {
-                                        game.backToBoard(players[socket.id].color === PLAYERS.PLAYER_1?game.dices[Number(k)].value: 25 - game.dices[Number(k)].value, players[socket.id].color);
-                                    }, 1000)
-                                }
-                            })
+                const isDicesRelevant = game.isDicesRelevant(players[socket.id].color)
+                io.sockets.in(roomIndex).emit(EMITTERES.ROLL_DICES, game.dices)
+                if(isDicesRelevant){
+                    if(game.board.middleCheckers[players[socket.id].color]){
+                        const backToBoardOptions = game.backToBoardOptions(players[socket.id].color);
+                        if(backToBoardOptions.length){
+                            io.sockets.in(roomIndex).emit(EMITTERES.ROLL_DICES, game.dices)
+                            if(Object.values(game.dices).every(dice => !backToBoardOptions.some(val => val === dice.value))){
+                                nextPlayer()
+                            }else if(game.board.middleCheckers[players[socket.id].color] >= Object.keys(game.dices).length){
+                                Object.keys(game.dices).forEach(k => {
+                                console.log(Object.keys(game.dices).length);
+                                if(backToBoardOptions.some(option => game.dices[Number(k)].value === option)){
+                                        setTimeout(() => {
+                                            game.backToBoard(players[socket.id].color === PLAYERS.PLAYER_1?game.dices[Number(k)].value: 25 - game.dices[Number(k)].value, players[socket.id].color);
+                                        }, 1000)
+                                    }
+                                })
+                                nextPlayer();
+                            }
+                        }else{
                             nextPlayer();
                         }
-                    }else{
-                        nextPlayer();
                     }
                 }else{
-                    io.sockets.in(roomIndex).emit(EMITTERES.ROLL_DICES, game.dices)
+                    nextPlayer();
                 }
             }
         })
@@ -123,21 +125,21 @@ io.on(EMITTERES.CONNECTION, (socket) => {
         })
     
         socket.on(EMITTERES.MOVE, (to: number) => {
-            console.info(EMITTERES.MOVE)
-            const distance = to - game.move.from
+            console.info(EMITTERES.MOVE);
+            const distance = to - game.move.from;
              
-            if(game.isMoveLigal(to, players[socket.id].color) && game.isDistanceInDices(distance, players[socket.id].color)){
+            if(game.isDicesRelevant(players[socket.id].color) && game.isMoveLigal(to, players[socket.id].color) && game.isDistanceInDices(distance, players[socket.id].color)){
                 if((game.board.points[to].color && game.board.points[to].color !== game.move.color) && (game.board.points[to].checkers === 1)){
                     game.board.points[to].checkers = 0;
-                    game.board.middleCheckers[game.currentPlayer === PLAYERS.PLAYER_1? PLAYERS.PLAYER_2: PLAYERS.PLAYER_1]++
+                    game.board.middleCheckers[game.currentPlayer === PLAYERS.PLAYER_1? PLAYERS.PLAYER_2: PLAYERS.PLAYER_1]++;
                 }
                 game.move.to = to;
-                game.board.pointSubOne(game.move.from)
-                game.board.pointAddOne(game.move.to)
+                game.board.pointSubOne(game.move.from);
+                game.board.pointAddOne(game.move.to);
                 game.board.pointChangeColor(game.move.to, players[socket.id].color);
                 game.move.initMove();
-                game.deleteDiceByValue(Math.abs(distance))
-                if(game.isAllDicesUsed()){
+                game.deleteDiceByValue(Math.abs(distance));
+                if(!game.isDicesRelevant(players[socket.id].color) && game.isAllDicesUsed()){
                     game.nextPlayer()
                 }
                 io.sockets.in(roomIndex).emit(EMITTERES.MOVE, game)
@@ -170,7 +172,7 @@ io.on(EMITTERES.CONNECTION, (socket) => {
                 }
             }
 
-            if(game.isMoveOutLigal(game.move.from, players[socket.id].color)){
+            if(game.isMoveOutLigal(players[socket.id].color)){
                 if(game.isDistanceInDices(distance, players[socket.id].color)){
                     game.deleteDiceByValue(distance)
                     final()

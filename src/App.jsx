@@ -22,7 +22,8 @@ const App = () => {
       console.log(data);
     } 
 
-    const setGame = (game) => {      
+    const setGame = (game) => {
+      console.log(game);      
       dispatch(setPoints(game.board.points))
       dispatch(setMiddleCheckers(game.board.middleCheckers))
       dispatch(setOutsideCheckers(game.board.outsideCheckders))

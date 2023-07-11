@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import styles from './Login.module.scss'
 import { socket } from '../../features/socket'
 import { EMITTERES, MESSAGES } from '../../features/enums'
@@ -9,17 +9,18 @@ const Login = () => {
     const [username, setUsername] = useState('')
     const dispatch = useDispatch()
     const inputRef = useRef()
-    const sendUsername = () => {
+    const sendUsername = useCallback(() => {
         socket.emit(EMITTERES.LOGIN, username, (room) => {
             console.log("joined to rooom " + room);
         })
         dispatch(setMessage(MESSAGES.WAITING_FOR_PLAYER))
         setUsername("")
-    }
+    }, [dispatch, username])
 
     useEffect(() =>{
         const onkeyDown = (e) =>{
             if(e.key === 'Enter'){
+                e.preventDefault();
                 sendUsername();
             }
         }
@@ -27,7 +28,7 @@ const Login = () => {
         return () => {
             window.removeEventListener("keydown", onkeyDown)
         }
-    })
+    }, [sendUsername])
 
     const onkeyPress = (e) => {
         setUsername(e.target.value)
