@@ -1,6 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
-    dices: {}
+    dices: {
+        1: { value: 1, isRelevant: true},
+        2: { value: 1, isRelevant: true}
+    }
 }
 const dicesSlice = createSlice({
     name: "dices",

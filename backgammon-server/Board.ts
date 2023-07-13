@@ -19,7 +19,7 @@ export class Board{
     constructor(){}
 
     initBoard() {
-        this.points = this.points =  this.points = {
+        this.points = this.points =   this.points = {
             1: { checkers: 2, color: PLAYERS.PLAYER_1 },
             6: { checkers: 5, color: PLAYERS.PLAYER_2 },
             8: { checkers: 3, color: PLAYERS.PLAYER_2 },
@@ -29,10 +29,10 @@ export class Board{
             19: { checkers: 5, color: PLAYERS.PLAYER_1 },
             24: { checkers: 2, color: PLAYERS.PLAYER_2 }
         }
-              
-        for(let k = 1; k < 24; k++){
+        
+        for(let k = 1; k <= 24; k++){
             if(!this.points[k]){
-                this.points[k] = { checkers: 0, color: null }
+                this.points[k] = { checkers: 0, color: null };
             }
         }
     }
@@ -89,4 +89,22 @@ export class Board{
 /**
  * everyone in position to move out
         
+ */
+
+
+/**
+    all whites block to back to board but only one is open 
+
+    this.points = this.points =  this.points = {
+            12: { checkers: 2, color: PLAYERS.PLAYER_2 },
+            18: { checkers: 5, color: PLAYERS.PLAYER_2 },
+            19: { checkers: 3, color: PLAYERS.PLAYER_1},
+            20: { checkers: 5, color: PLAYERS.PLAYER_1 },
+            21: { checkers: 5, color: PLAYERS.PLAYER_1 },
+            22: { checkers: 3, color: PLAYERS.PLAYER_1 },
+            23: { checkers: 5, color: PLAYERS.PLAYER_1 },
+            24: { checkers: 2, color: PLAYERS.PLAYER_1 }
+        }
+        this.middleCheckers[PLAYERS.PLAYER_2] = 1;
+    
  */

@@ -31,7 +31,7 @@ const Board = () => {
             socket.emit(EMITTERES.MOVE, index)
         }
     }
-
+    
     return (
         <div className={styles.board}>
             {
@@ -66,7 +66,7 @@ const Board = () => {
                                 styles.dicesHolder, k === COLORS.PLAYER_1 ? styles.left : styles.right,
                                 currentPlayer?.color !== players[k].color && styles.hidden)}
                         >
-                            <DicesHolder bgc={players[k].color} />
+                            {players[k].color === currentPlayer.color && <DicesHolder bgc={players[k].color} />}
                         </div>
                     )
                 })
